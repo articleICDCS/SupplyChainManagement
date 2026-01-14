@@ -1,0 +1,114 @@
+# Configuration principale du système de décision
+
+# Paramètres généraux
+general:
+  simulation_duration: 24  # heures
+  time_step: 0.1  # heures (6 minutes)
+  random_seed: 42
+  log_level: INFO
+
+# Paramètres des véhicules
+vehicles:
+  types:
+    - name: "refrigerated_truck"
+      capacity: 1000  # kg
+      temperature_range: [2, 8]  # °C (pour vaccins)
+      autonomy: 500  # km
+      avg_speed: 60  # km/h
+      refrigeration_power: 5000  # W
+      
+    - name: "cold_box"
+      capacity: 50  # kg
+      temperature_range: [-20, -10]  # °C (pour certains vaccins)
+      autonomy: 300  # km
+      avg_speed: 50  # km/h
+      refrigeration_power: 2000  # W
+
+# Paramètres des médicaments
+medicines:
+  types:
+    - name: "vaccine_covid"
+      optimal_temp: [-70, -60]  # °C
+      critical_temp_high: -50  # °C
+      critical_temp_low: -80  # °C
+      exposure_time_limit: 2  # heures hors température
+      
+    - name: "vaccine_standard"
+      optimal_temp: [2, 8]  # °C
+      critical_temp_high: 15  # °C
+      critical_temp_low: 0  # °C
+      exposure_time_limit: 4  # heures
+
+# Événements critiques - Probabilités
+critical_events:
+  refrigeration_failure:
+    base_probability: 0.05  # 5% par trajet
+    factors:
+      vehicle_age: 0.02  # +2% par an
+      extreme_weather: 0.15  # +15% en conditions extrêmes
+      war_zone: 0.25  # +25% en zone de conflit
+      
+  road_blockage:
+    base_probability: 0.10
+    factors:
+      war_zone: 0.40
+      natural_disaster: 0.30
+      
+  power_outage:
+    base_probability: 0.08
+    factors:
+      infrastructure_damage: 0.35
+      extreme_weather: 0.20
+
+# Conditions environnementales
+environment:
+  temperature_ranges:
+    extreme_hot: [35, 50]  # °C
+    hot: [25, 35]
+    moderate: [15, 25]
+    cold: [-10, 15]
+    extreme_cold: [-30, -10]
+    
+  weather_conditions:
+    - normal
+    - rain
+    - snow
+    - storm
+    - extreme_heat
+    - extreme_cold
+
+# Paramètres de décision
+decision:
+  risk_thresholds:
+    low: 0.2
+    medium: 0.5
+    high: 0.8
+    
+  optimization_objectives:
+    - minimize_risk
+    - minimize_time
+    - minimize_cost
+    - maximize_reliability
+    
+  weight_factors:
+    medicine_value: 0.4
+    delivery_urgency: 0.3
+    route_safety: 0.2
+    cost: 0.1
+
+# Intégration AnyLogic
+anylogic:
+  data_format: "csv"  # ou "json", "excel"
+  import_path: "data/anylogic_output/"
+  export_path: "data/decision_output/"
+  
+# Visualisation
+visualization:
+  save_plots: true
+  plot_format: "png"
+  output_dir: "results/plots/"
+  
+# Base de données (pour stockage de résultats)
+database:
+  type: "sqlite"  # ou "postgresql", "mongodb"
+  path: "data/results.db"
